@@ -3,3 +3,6 @@ dist/
 *.ipa
 .DS_Store
 Thumbs.db
+
+# copie di lavoro degli agenti
+.claude/
