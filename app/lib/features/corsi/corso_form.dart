@@ -31,9 +31,20 @@ class _FormCorsoState extends ConsumerState<FormCorso> {
   late int? _semestre = widget.corso?.semestre;
   late String _colore = widget.corso?.colore ?? paletteCorsi.first;
   late Valutazione _valutazione = widget.corso?.valutazione ?? Valutazione.voto;
+  bool _salvando = false;
 
   Future<void> _salva() async {
-    if (!_form.currentState!.validate()) return;
+    if (_salvando || !_form.currentState!.validate()) return;
+    // Un secondo tocco mentre salva non deve creare un corso doppio.
+    setState(() => _salvando = true);
+    try {
+      await _scrivi();
+    } finally {
+      if (mounted) setState(() => _salvando = false);
+    }
+  }
+
+  Future<void> _scrivi() async {
     final repo = ref.read(repositoryProvider);
     final vecchio = widget.corso;
     if (vecchio != null && vecchio.valutazione != _valutazione && await repo.haEsito(vecchio.id)) {
@@ -167,7 +178,7 @@ class _FormCorsoState extends ConsumerState<FormCorso> {
                 children: [
                   TextButton(onPressed: () => Navigator.of(context).maybePop(), child: const Text('Annulla')),
                   const SizedBox(width: 8),
-                  FilledButton(onPressed: _salva, child: const Text('Salva')),
+                  FilledButton(onPressed: _salvando ? null : _salva, child: const Text('Salva')),
                 ],
               ),
             ],

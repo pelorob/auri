@@ -39,6 +39,7 @@ class _FormAppelloState extends ConsumerState<FormAppello> {
   late final _note = TextEditingController(text: widget.appello?.note);
   late Set<Preavviso> _preavvisi;
   String? _errore;
+  bool _salvando = false;
 
   @override
   void initState() {
@@ -48,7 +49,18 @@ class _FormAppelloState extends ConsumerState<FormAppello> {
   }
 
   Future<void> _salva() async {
+    if (_salvando) return;
     if (_corsoId == null) return setState(() => _errore = 'Scegli il corso');
+    // Un secondo tocco mentre salva non deve creare un appello doppio.
+    setState(() => _salvando = true);
+    try {
+      await _scrivi();
+    } finally {
+      if (mounted) setState(() => _salvando = false);
+    }
+  }
+
+  Future<void> _scrivi() async {
     // Prima il permesso: così la riprogrammazione dopo il salvataggio può già programmare le notifiche.
     await ref.read(richiestaPermessoNotificheProvider)();
     await ref
@@ -176,7 +188,7 @@ class _FormAppelloState extends ConsumerState<FormAppello> {
                 const Spacer(),
                 TextButton(onPressed: () => Navigator.of(context).maybePop(), child: const Text('Annulla')),
                 const SizedBox(width: 8),
-                FilledButton(onPressed: _salva, child: const Text('Salva')),
+                FilledButton(onPressed: _salvando ? null : _salva, child: const Text('Salva')),
               ],
             ),
           ],

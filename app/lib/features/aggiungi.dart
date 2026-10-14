@@ -5,24 +5,17 @@ import 'calendario/appello_form.dart';
 import 'corsi/corso_form.dart';
 import 'libretto/voto_form.dart';
 
-Widget pulsanteAggiungi(BuildContext context) => PopupMenuButton<String>(
-  tooltip: 'Aggiungi',
-  onSelected: (v) => switch (v) {
-    'corso' => mostraFormCorso(context),
-    'appello' => mostraFormAppello(context),
-    _ => mostraFormVoto(context),
-  },
-  itemBuilder: (_) => const [
-    PopupMenuItem(value: 'corso', child: Text('Corso')),
-    PopupMenuItem(value: 'appello', child: Text('Appello')),
-    PopupMenuItem(value: 'voto', child: Text('Voto')),
+// Un vero pulsante attivo che apre il menu (prima era un pulsante disattivato ridipinto).
+Widget pulsanteAggiungi(BuildContext context) => MenuAnchor(
+  menuChildren: [
+    MenuItemButton(onPressed: () => mostraFormCorso(context), child: const Text('Corso')),
+    MenuItemButton(onPressed: () => mostraFormAppello(context), child: const Text('Appello')),
+    MenuItemButton(onPressed: () => mostraFormVoto(context), child: const Text('Voto')),
   ],
-  child: IgnorePointer(
-    child: FilledButton.icon(
-      style: FilledButton.styleFrom(disabledBackgroundColor: AuriColori.inchiostro, disabledForegroundColor: Colors.white),
-      onPressed: null,
-      icon: const Icon(Icons.add_rounded),
-      label: const Text('Aggiungi'),
-    ),
+  builder: (_, menu, _) => FilledButton.icon(
+    style: FilledButton.styleFrom(backgroundColor: AuriColori.inchiostro, foregroundColor: Colors.white),
+    onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+    icon: const Icon(Icons.add_rounded),
+    label: const Text('Aggiungi'),
   ),
 );

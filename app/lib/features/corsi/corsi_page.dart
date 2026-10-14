@@ -117,7 +117,7 @@ class CorsiPage extends ConsumerWidget {
                 context: ctx,
                 builder: (c2) => AlertDialog(
                   title: const Text('Eliminare il corso?'),
-                  content: const Text('Verranno eliminati anche i suoi appelli e il voto.'),
+                  content: const Text('Verranno eliminati anche i suoi appelli, il voto, i PDF delle slide e le flashcard.'),
                   actions: [
                     TextButton(onPressed: () => Navigator.pop(c2, false), child: const Text('Annulla')),
                     FilledButton(onPressed: () => Navigator.pop(c2, true), child: const Text('Elimina')),

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../app/componenti.dart';
 import '../../app/providers.dart';
 import '../../app/tema.dart';
+import '../../data/database.dart';
 import '../../data/repository.dart';
 import '../../domain/avvisi.dart';
 import '../../domain/calendario.dart';
@@ -160,6 +161,35 @@ class _Cella extends StatelessWidget {
   /// Giorni del piano di studio prima degli esami.
   final Set<DateTime> ripasso;
 
+  /// Con più appelli nello stesso giorno lascia scegliere quale aprire.
+  Future<void> _apri(BuildContext context, List<AppelloConCorso> delGiorno) async {
+    if (delGiorno.length == 1) return mostraFormAppello(context, appello: delGiorno.single.appello);
+    final scelto = await showModalBottomSheet<Appello>(
+      context: context,
+      builder: (c) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+              child: Text('Quale appello?', style: titolo(22)),
+            ),
+            for (final a in delGiorno)
+              ListTile(
+                leading: CircleAvatar(radius: 8, backgroundColor: coloreDaHex(a.corso.colore)),
+                title: Text(a.corso.nome),
+                subtitle: Text('${a.appello.tipo.etichetta} · ${oraMinuti(a.appello.dataOra)}${a.appello.aula == null ? '' : ' · ${a.appello.aula}'}'),
+                onTap: () => Navigator.pop(c, a.appello),
+              ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+    if (scelto != null && context.mounted) await mostraFormAppello(context, appello: scelto);
+  }
+
   @override
   Widget build(BuildContext context) {
     final g = giorno;
@@ -177,7 +207,7 @@ class _Cella extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: delGiorno.isEmpty ? null : () => mostraFormAppello(context, appello: delGiorno.first.appello),
+        onTap: delGiorno.isEmpty ? null : () => _apri(context, delGiorno),
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Column(
