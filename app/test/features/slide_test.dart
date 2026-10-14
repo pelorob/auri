@@ -94,6 +94,12 @@ void main() {
       await t.pump();
       expect(find.textContaining('Elettricità · pag. 1'), findsOneWidget);
       expect(find.textContaining('Elettricità · pag. 2'), findsOneWidget);
+      // Aprendo un risultato la tastiera si chiude (al ritorno non deve coprire lo schermo).
+      final campo = find.byType(EditableText, skipOffstage: false);
+      expect(t.widget<EditableText>(campo).focusNode.hasFocus, isTrue);
+      await t.tap(find.textContaining('Elettricità · pag. 1'));
+      await t.pump();
+      expect(t.widget<EditableText>(campo).focusNode.hasFocus, isFalse);
     });
 
     testWidgets('documento: indice, glossario, definizioni', (t) async {

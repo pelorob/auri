@@ -42,11 +42,15 @@ class _SlidePageState extends ConsumerState<SlidePage> {
     super.dispose();
   }
 
-  void _apri(int documentoId, {int pagina = 1}) => Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (_) => DocumentoPage(documentoId: documentoId, paginaIniziale: pagina),
-    ),
-  );
+  void _apri(int documentoId, {int pagina = 1}) {
+    // Chiude la tastiera della ricerca: altrimenti al ritorno si riapre e copre metà schermo.
+    FocusManager.instance.primaryFocus?.unfocus();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => DocumentoPage(documentoId: documentoId, paginaIniziale: pagina),
+      ),
+    );
+  }
 
   Future<void> _importa() async {
     final avvisi = ScaffoldMessenger.of(context);
