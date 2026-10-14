@@ -27,6 +27,12 @@ String perPdf(String s) {
   return b.toString();
 }
 
+/// Nome del file della scheda: i caratteri non ammessi nei nomi di file (es. "/") diventano "-".
+String nomeFileScheda(String titolo) {
+  final pulito = titolo.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '-').trim();
+  return 'Scheda ${pulito.isEmpty ? 'documento' : pulito}.pdf';
+}
+
 final _viola = PdfColor.fromInt(0xFF5B3DE6);
 final _grigio = PdfColor.fromInt(0xFF6B6785);
 final _lime = PdfColor.fromInt(0xFFD6F35B);

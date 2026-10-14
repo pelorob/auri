@@ -13,6 +13,14 @@ import '../../domain/slide.dart';
 import '../../services/importazione_slide.dart';
 import 'documento_page.dart';
 
+/// Sceglie un PDF dai file (sostituibile nei test, dove il selettore nativo non c'è).
+final sceltaPdfProvider = Provider<Future<String?> Function()>(
+  (ref) => () async {
+    final scelta = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: const ['pdf']);
+    return scelta.isEmpty ? null : scelta.single.path;
+  },
+);
+
 class SlidePage extends ConsumerStatefulWidget {
   const SlidePage({super.key});
   @override
@@ -54,9 +62,10 @@ class _SlidePageState extends ConsumerState<SlidePage> {
 
   Future<void> _importa() async {
     final avvisi = ScaffoldMessenger.of(context);
-    final scelta = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: const ['pdf']);
-    if (scelta.isEmpty || scelta.single.path == null || !mounted) return;
-    final corsi = ref.read(corsiProvider).value ?? const [];
+    final percorso = await ref.read(sceltaPdfProvider)();
+    if (percorso == null || !mounted) return;
+    final corsi = await ref.read(corsiProvider.future);
+    if (!mounted) return;
     if (corsi.isEmpty) {
       avvisi.showSnackBar(const SnackBar(content: Text('Prima crea un corso a cui collegare le slide.')));
       return;
@@ -70,6 +79,8 @@ class _SlidePageState extends ConsumerState<SlidePage> {
     );
     if (corsoId == null || !mounted) return;
     final avanzamento = ValueNotifier<double?>(null);
+    // Preso subito: se nel frattempo la pagina viene chiusa, il dialogo va comunque tolto.
+    final navigatore = Navigator.of(context);
     unawaited(
       showDialog<void>(
         context: context,
@@ -84,14 +95,14 @@ class _SlidePageState extends ConsumerState<SlidePage> {
       ),
     );
     try {
-      final id = await ref.read(importazioneProvider).importa(File(scelta.single.path!), corsoId: corsoId, avanzamento: (f, t) => avanzamento.value = f / t);
-      if (mounted) Navigator.of(context).pop();
-      _apri(id);
+      final id = await ref.read(importazioneProvider).importa(File(percorso), corsoId: corsoId, avanzamento: (f, t) => avanzamento.value = f / t);
+      navigatore.pop();
+      if (mounted) _apri(id);
     } on PdfNonLeggibile {
-      if (mounted) Navigator.of(context).pop();
+      navigatore.pop();
       avvisi.showSnackBar(const SnackBar(content: Text('Non riesco a leggere questo PDF (protetto o danneggiato?).')));
     } catch (_) {
-      if (mounted) Navigator.of(context).pop();
+      navigatore.pop();
       avvisi.showSnackBar(const SnackBar(content: Text('Importazione non riuscita: riprova.')));
     }
   }
@@ -114,6 +125,8 @@ class _SlidePageState extends ConsumerState<SlidePage> {
   @override
   Widget build(BuildContext context) {
     final documenti = ref.watch(documentiProvider).value ?? const <DocumentoConCorso>[];
+    // Tenuto attivo: serve subito per scegliere il corso all'importazione.
+    ref.watch(corsiProvider);
     final perCorso = <String, List<DocumentoConCorso>>{};
     for (final d in documenti) {
       (perCorso[d.corso.nome] ??= []).add(d);

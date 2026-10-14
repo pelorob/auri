@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,19 @@ import '../../domain/slide.dart';
 import '../../services/ocr.dart';
 import '../../services/scheda_pdf.dart';
 import 'annotazioni.dart';
+
+/// Condivide la scheda PDF creata (sostituibile nei test, dove il foglio di condivisione non c'è).
+final condivisioneSchedaProvider = Provider<Future<void> Function(File file, Rect origine)>(
+  (ref) =>
+      (file, origine) => SharePlus.instance.share(ShareParams(files: [XFile(file.path)], sharePositionOrigin: origine)),
+);
+
+/// Cartella dove scrivere la scheda prima di condividerla.
+final cartellaSchedaProvider = Provider<Future<Directory> Function()>((ref) => getTemporaryDirectory);
+
+/// La scheda si impagina fuori dal thread dell'interfaccia.
+Future<Uint8List> _creaScheda(String titolo, String corso, _Analisi a) =>
+    Isolate.run(() => creaSchedaPdf(titolo: titolo, corso: corso, indice: a.indice, riassunto: a.riassunto, glossario: a.termini, definizioni: a.definizioni));
 
 class _Dati {
   const _Dati(this.documento, this.pagine, this.percorso, this.analisi);
@@ -49,6 +63,7 @@ class DocumentoPage extends ConsumerStatefulWidget {
 class _DocumentoPageState extends ConsumerState<DocumentoPage> {
   late int _pagina = widget.paginaIniziale;
   late Future<_Dati> _dati = _carica();
+  bool _creoScheda = false;
 
   Future<_Dati> _carica() async {
     final repo = ref.read(repositoryProvider);
@@ -88,6 +103,22 @@ class _DocumentoPageState extends ConsumerState<DocumentoPage> {
           _dati = _carica();
         });
       }
+    }
+  }
+
+  Future<void> _schedaPdf(_Dati d, Rect origine) async {
+    final avvisi = ScaffoldMessenger.of(context);
+    setState(() => _creoScheda = true);
+    try {
+      final corso = (ref.read(corsiProvider).value ?? const []).where((c) => c.corso.id == d.documento.corsoId).firstOrNull;
+      final byte = await _creaScheda(d.documento.titolo, corso?.corso.nome ?? '', d.analisi);
+      final cartella = await ref.read(cartellaSchedaProvider)();
+      final file = await File(p.join(cartella.path, nomeFileScheda(d.documento.titolo))).writeAsBytes(byte);
+      await ref.read(condivisioneSchedaProvider)(file, origine);
+    } catch (_) {
+      avvisi.showSnackBar(const SnackBar(content: Text('Non sono riuscita a creare la scheda: riprova.')));
+    } finally {
+      if (mounted) setState(() => _creoScheda = false);
     }
   }
 
@@ -157,22 +188,15 @@ class _DocumentoPageState extends ConsumerState<DocumentoPage> {
                             alignment: Alignment.centerLeft,
                             child: Builder(
                               builder: (ctx) => TextButton.icon(
-                                onPressed: () async {
-                                  final box = ctx.findRenderObject()! as RenderBox;
-                                  final origine = box.localToGlobal(Offset.zero) & box.size;
-                                  final corso = (ref.read(corsiProvider).value ?? const []).where((c) => c.corso.id == d.documento.corsoId).firstOrNull;
-                                  final byte = await creaSchedaPdf(
-                                    titolo: d.documento.titolo,
-                                    corso: corso?.corso.nome ?? '',
-                                    indice: indice,
-                                    riassunto: sintesi,
-                                    glossario: termini,
-                                    definizioni: defs,
-                                  );
-                                  final file = File(p.join((await getTemporaryDirectory()).path, 'Scheda ${d.documento.titolo}.pdf'))..writeAsBytesSync(byte);
-                                  await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], sharePositionOrigin: origine));
-                                },
-                                icon: const Icon(Icons.print_outlined),
+                                onPressed: _creoScheda
+                                    ? null
+                                    : () {
+                                        final box = ctx.findRenderObject()! as RenderBox;
+                                        _schedaPdf(d, box.localToGlobal(Offset.zero) & box.size);
+                                      },
+                                icon: _creoScheda
+                                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                                    : const Icon(Icons.print_outlined),
                                 label: const Text('Scheda PDF'),
                               ),
                             ),
