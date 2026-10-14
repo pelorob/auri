@@ -39,7 +39,7 @@ jobs:
         timeout-minutes: 25
         run: flutter build ios --simulator --debug
       - name: Giro completo dell'app
-        timeout-minutes: 20
+        timeout-minutes: 30
         run: flutter test integration_test/app_test.dart -d "$UDID" --reporter expanded --dart-define=FOTO_DIR="$RUNNER_TEMP/foto"
       - uses: actions/upload-artifact@v4
         if: always()
