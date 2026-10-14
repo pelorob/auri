@@ -28,6 +28,9 @@ class _SimulazionePageState extends ConsumerState<SimulazionePage> {
   Map<int, String> _titoliDocumenti = const {};
   final _escluseOra = <Domanda>{};
 
+  /// Esclusione in corso: niente secondo tocco né risposte finché la lista non è aggiornata.
+  bool _escludendo = false;
+
   @override
   void initState() {
     super.initState();
@@ -59,6 +62,7 @@ class _SimulazionePageState extends ConsumerState<SimulazionePage> {
   }
 
   void _rispondi(int scelta) {
+    if (_escludendo || _finita) return;
     _risposte.add(scelta);
     if (_risposte.length >= _domande!.length) {
       _termina();
@@ -69,11 +73,17 @@ class _SimulazionePageState extends ConsumerState<SimulazionePage> {
 
   /// Domanda strana durante il quiz: non conta, e la sua frase non verrà più usata.
   Future<void> _escludiCorrente() async {
-    final d = _domande!;
-    final q = d[_risposte.length];
-    await ref.read(repositoryProvider).escludiDomanda(q.documentoId, q.frase);
+    if (_escludendo || _finita) return;
+    _escludendo = true;
+    final q = _domande![_risposte.length];
+    try {
+      await ref.read(repositoryProvider).escludiDomanda(q.documentoId, q.frase);
+    } finally {
+      _escludendo = false;
+    }
     if (!mounted || _finita) return;
-    setState(() => _domande = [...d]..remove(q));
+    // Lista attuale, non quella di prima dell'attesa.
+    setState(() => _domande = [..._domande!]..remove(q));
     if (_domande!.isEmpty) {
       _timer?.cancel();
       setState(() => _errore = 'Non sono rimaste domande: riprova con un altro quiz.');

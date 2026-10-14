@@ -156,58 +156,92 @@ class RipassoPage extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Prima crea un corso.')));
       return;
     }
-    var corsoId = corsi.first.corso.id;
-    final fronte = TextEditingController();
-    final retro = TextEditingController();
-    final ok = await showDialog<bool>(
+    final carta = await showDialog<({int corsoId, String fronte, String retro})>(
       context: context,
-      builder: (c) => StatefulBuilder(
-        builder: (c, aggiorna) => AlertDialog(
-          title: const Text('Nuova carta'),
-          content: SizedBox(
-            width: 460,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DropdownButtonFormField<int>(
-                  initialValue: corsoId,
-                  decoration: const InputDecoration(labelText: 'Corso'),
-                  items: [for (final x in corsi) DropdownMenuItem(value: x.corso.id, child: Text(x.corso.nome))],
-                  onChanged: (v) => aggiorna(() => corsoId = v!),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: fronte,
-                  decoration: const InputDecoration(labelText: 'Domanda (fronte)'),
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: retro,
-                  decoration: const InputDecoration(labelText: 'Risposta (retro)'),
-                  maxLines: 3,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Annulla')),
-            FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Salva')),
-          ],
-        ),
-      ),
+      builder: (_) => _DialogoNuovaCarta(corsi: [for (final x in corsi) x.corso]),
     );
-    if (ok != true || fronte.text.trim().isEmpty || retro.text.trim().isEmpty) return;
+    if (carta == null) return;
     await ref
         .read(repositoryProvider)
         .salvaCarta(
-          CarteCompanion.insert(
-            corsoId: corsoId,
-            fronte: fronte.text.trim(),
-            retro: retro.text.trim(),
-            origine: OrigineCarta.manuale,
-            pagina: const Value(null),
-          ),
+          CarteCompanion.insert(corsoId: carta.corsoId, fronte: carta.fronte, retro: carta.retro, origine: OrigineCarta.manuale, pagina: const Value(null)),
         );
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Carta creata')));
   }
+}
+
+/// Finestra "Nuova carta": si chiude solo con domanda e risposta scritte (o con Annulla).
+class _DialogoNuovaCarta extends StatefulWidget {
+  const _DialogoNuovaCarta({required this.corsi});
+  final List<Corso> corsi;
+
+  @override
+  State<_DialogoNuovaCarta> createState() => _DialogoNuovaCartaState();
+}
+
+class _DialogoNuovaCartaState extends State<_DialogoNuovaCarta> {
+  late int _corsoId = widget.corsi.first.id;
+  final _fronte = TextEditingController();
+  final _retro = TextEditingController();
+  bool _incompleta = false;
+
+  @override
+  void dispose() {
+    _fronte.dispose();
+    _retro.dispose();
+    super.dispose();
+  }
+
+  void _salva() {
+    final fronte = _fronte.text.trim();
+    final retro = _retro.text.trim();
+    if (fronte.isEmpty || retro.isEmpty) {
+      setState(() => _incompleta = true);
+      return;
+    }
+    Navigator.pop(context, (corsoId: _corsoId, fronte: fronte, retro: retro));
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: const Text('Nuova carta'),
+    content: SizedBox(
+      width: 460,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          DropdownButtonFormField<int>(
+            initialValue: _corsoId,
+            decoration: const InputDecoration(labelText: 'Corso'),
+            items: [for (final c in widget.corsi) DropdownMenuItem(value: c.id, child: Text(c.nome))],
+            onChanged: (v) => setState(() => _corsoId = v!),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _fronte,
+            decoration: const InputDecoration(labelText: 'Domanda (fronte)'),
+            maxLines: 2,
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _retro,
+            decoration: const InputDecoration(labelText: 'Risposta (retro)'),
+            maxLines: 3,
+          ),
+          if (_incompleta) ...[
+            const SizedBox(height: 12),
+            Text(
+              'Scrivi la domanda e la risposta.',
+              style: testo(14, colore: AuriColori.arancio, peso: FontWeight.w600),
+            ),
+          ],
+        ],
+      ),
+    ),
+    actions: [
+      TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+      FilledButton(onPressed: _salva, child: const Text('Salva')),
+    ],
+  );
 }
