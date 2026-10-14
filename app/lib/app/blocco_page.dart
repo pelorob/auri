@@ -12,6 +12,9 @@ class BloccoPage extends ConsumerStatefulWidget {
 }
 
 class _BloccoPageState extends ConsumerState<BloccoPage> {
+  bool _inCorso = false;
+  bool _fallita = false;
+
   @override
   void initState() {
     super.initState();
@@ -19,9 +22,25 @@ class _BloccoPageState extends ConsumerState<BloccoPage> {
   }
 
   Future<void> _sblocca() async {
-    final touchId = ref.read(touchIdProvider);
-    // Senza Touch ID e senza codice non si può autenticare: non lasciarla chiusa fuori.
-    if (!await touchId.disponibile() || await touchId.autentica()) ref.read(bloccoProvider.notifier).sblocca();
+    // Una richiesta alla volta: quella automatica e il tocco sul pulsante non si sovrappongono.
+    if (_inCorso) return;
+    setState(() {
+      _inCorso = true;
+      _fallita = false;
+    });
+    try {
+      final touchId = ref.read(touchIdProvider);
+      // Senza Touch ID e senza codice non si può autenticare: non lasciarla chiusa fuori.
+      final ok = !await touchId.disponibile() || await touchId.autentica();
+      if (!mounted) return;
+      if (ok) {
+        ref.read(bloccoProvider.notifier).sblocca();
+      } else {
+        setState(() => _fallita = true);
+      }
+    } finally {
+      if (mounted) setState(() => _inCorso = false);
+    }
   }
 
   @override
@@ -62,14 +81,24 @@ class _BloccoPageState extends ConsumerState<BloccoPage> {
                   child: const Icon(Icons.fingerprint_rounded, size: 80, color: AuriColori.viola),
                 ),
                 const SizedBox(height: 28),
+                SizedBox(
+                  height: 24,
+                  child: _fallita
+                      ? Text(
+                          'Non riconosciuta, riprova',
+                          style: testo(15, peso: FontWeight.w600, colore: AuriColori.lime),
+                        )
+                      : null,
+                ),
+                const SizedBox(height: 4),
                 FilledButton(
                   style: FilledButton.styleFrom(backgroundColor: AuriColori.lime, foregroundColor: AuriColori.inchiostro, minimumSize: const Size(260, 56)),
-                  onPressed: _sblocca,
+                  onPressed: _inCorso ? null : _sblocca,
                   child: const Text('Sblocca con Touch ID'),
                 ),
                 const SizedBox(height: 8),
                 TextButton(
-                  onPressed: _sblocca,
+                  onPressed: _inCorso ? null : _sblocca,
                   child: Text(
                     'Usa il codice dell\'iPad',
                     style: testo(15, peso: FontWeight.w600, colore: Colors.white),

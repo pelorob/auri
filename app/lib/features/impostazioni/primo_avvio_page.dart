@@ -18,15 +18,17 @@ class _PrimoAvvioPageState extends ConsumerState<PrimoAvvioPage> {
   int _cfu = 180;
   int _lode = 30;
   bool _blocco = false;
+  bool _finito = false;
 
-  Future<void> _fine({bool salta = false}) async {
+  /// Salva quanto scelto finora: con "Salta" i passi non visti restano ai valori predefiniti.
+  Future<void> _fine() async {
+    if (_finito) return;
+    _finito = true;
     final repo = ref.read(repositoryProvider);
-    if (!salta) {
-      await repo.salvaPreferenza(Preferenze.kNome, _nome.text.trim());
-      await repo.salvaPreferenza(Preferenze.kCfuTotali, '$_cfu');
-      await repo.salvaPreferenza(Preferenze.kLode, '$_lode');
-      await repo.salvaPreferenza(Preferenze.kBlocco, '$_blocco');
-    }
+    await repo.salvaPreferenza(Preferenze.kNome, _nome.text.trim());
+    await repo.salvaPreferenza(Preferenze.kCfuTotali, '$_cfu');
+    await repo.salvaPreferenza(Preferenze.kLode, '$_lode');
+    await repo.salvaPreferenza(Preferenze.kBlocco, '$_blocco');
     await repo.salvaPreferenza(Preferenze.kPrimoAvvioIl, DateTime.now().toIso8601String());
     await repo.salvaPreferenza(Preferenze.kPrimoAvvioFatto, 'true');
   }
@@ -52,7 +54,8 @@ class _PrimoAvvioPageState extends ConsumerState<PrimoAvvioPage> {
         contenuto,
       ],
     );
-    return ColoredBox(
+    // Material (non ColoredBox): l'interruttore di Touch ID disegna l'effetto del tocco.
+    return Material(
       color: AuriColori.sfondo,
       child: Center(
         child: SizedBox(
@@ -114,7 +117,7 @@ class _PrimoAvvioPageState extends ConsumerState<PrimoAvvioPage> {
                 padding: const EdgeInsets.only(bottom: 40),
                 child: Row(
                   children: [
-                    TextButton(onPressed: () => _fine(salta: true), child: const Text('Salta')),
+                    TextButton(onPressed: _fine, child: const Text('Salta')),
                     const Spacer(),
                     FilledButton(onPressed: _avanti, child: Text(_passo == 2 ? 'Inizia' : 'Avanti')),
                   ],

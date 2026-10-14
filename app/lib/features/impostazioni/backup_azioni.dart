@@ -7,16 +7,38 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../app/providers.dart';
+import '../../data/database.dart';
 import '../../domain/preferenze.dart';
 import '../../services/backup.dart';
 
+/// Le parti che parlano col sistema (file temporanei, condivisione, scelta del file):
+/// sostituibili nei test.
+class SistemaBackup {
+  const SistemaBackup();
+
+  Future<File> creaCopia(AuriDb db) async => creaCopiaBackup(db, await getTemporaryDirectory(), DateTime.now());
+
+  /// true se il file è stato davvero salvato o inviato.
+  Future<bool> condividi(File file, Rect origine) async {
+    final esito = await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], sharePositionOrigin: origine));
+    return esportazioneRiuscita(esito.status);
+  }
+
+  Future<String?> scegliFile() async {
+    final scelta = await FilePicker.pickFiles();
+    return scelta.isEmpty ? null : scelta.single.path;
+  }
+}
+
+final sistemaBackupProvider = Provider<SistemaBackup>((ref) => const SistemaBackup());
+
 Future<void> esportaBackup(BuildContext context, WidgetRef ref, Rect origine) async {
   final avvisi = ScaffoldMessenger.of(context);
+  final sistema = ref.read(sistemaBackupProvider);
   try {
     final db = ref.read(dbProvider).requireValue;
-    final file = await creaCopiaBackup(db, await getTemporaryDirectory(), DateTime.now());
-    final esito = await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], sharePositionOrigin: origine));
-    if (esportazioneRiuscita(esito.status)) {
+    final file = await sistema.creaCopia(db);
+    if (await sistema.condividi(file, origine)) {
       await ref.read(repositoryProvider).salvaPreferenza(Preferenze.kUltimoBackup, DateTime.now().toIso8601String());
     }
   } catch (_) {
@@ -25,8 +47,7 @@ Future<void> esportaBackup(BuildContext context, WidgetRef ref, Rect origine) as
 }
 
 Future<void> ripristinaBackup(BuildContext context, WidgetRef ref) async {
-  final scelta = await FilePicker.pickFiles();
-  final percorso = scelta.isEmpty ? null : scelta.single.path;
+  final percorso = await ref.read(sistemaBackupProvider).scegliFile();
   if (percorso == null || !context.mounted) return;
   final ok = await showDialog<bool>(
     context: context,

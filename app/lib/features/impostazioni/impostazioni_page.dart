@@ -31,11 +31,7 @@ class ImpostazioniPage extends ConsumerWidget {
             children: [
               Text('Il tuo corso di laurea', style: titolo(20, peso: FontWeight.w700)),
               const SizedBox(height: 12),
-              TextFormField(
-                initialValue: p.nomeCorsoDiLaurea,
-                decoration: const InputDecoration(labelText: 'Nome del corso di laurea'),
-                onChanged: (v) => salva(Preferenze.kNome, v.trim()),
-              ),
+              _CampoNome(valore: p.nomeCorsoDiLaurea, salva: (v) => salva(Preferenze.kNome, v)),
               const SizedBox(height: 12),
               Row(
                 children: [
@@ -175,4 +171,42 @@ class ImpostazioniPage extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// Il campo segue il valore salvato (es. dopo un ripristino), senza disturbare mentre scrive.
+class _CampoNome extends StatefulWidget {
+  const _CampoNome({required this.valore, required this.salva});
+  final String valore;
+  final ValueChanged<String> salva;
+  @override
+  State<_CampoNome> createState() => _CampoNomeState();
+}
+
+class _CampoNomeState extends State<_CampoNome> {
+  late final _testo = TextEditingController(text: widget.valore);
+
+  @override
+  void didUpdateWidget(_CampoNome prima) {
+    super.didUpdateWidget(prima);
+    // Mentre scrive si salva il testo senza spazi ai lati: non va riscritto per quello.
+    if (widget.valore != _testo.text.trim()) {
+      _testo.value = TextEditingValue(
+        text: widget.valore,
+        selection: TextSelection.collapsed(offset: widget.valore.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _testo.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => TextFormField(
+    controller: _testo,
+    decoration: const InputDecoration(labelText: 'Nome del corso di laurea'),
+    onChanged: (v) => widget.salva(v.trim()),
+  );
 }

@@ -29,6 +29,7 @@ class _FormVotoState extends ConsumerState<FormVoto> {
   bool _lode = false;
   DateTime _data = DateTime.now();
   String? _errore;
+  bool _salvataggio = false;
 
   @override
   void initState() {
@@ -48,18 +49,43 @@ class _FormVotoState extends ConsumerState<FormVoto> {
   bool get _aVoto => _corso?.valutazione != Valutazione.idoneita;
 
   Future<void> _salva() async {
+    if (_salvataggio) return;
     if (_corso == null) return setState(() => _errore = 'Scegli il corso');
     if (_aVoto && validaVoto(_voto) != null) return setState(() => _errore = validaVoto(_voto));
-    await ref
-        .read(repositoryProvider)
-        .registraEsito(
-          EsitiCompanion(
-            corsoId: Value(_corso!.id),
-            voto: Value(_aVoto ? _voto : null),
-            lode: Value(_aVoto && _lode && lodeAmmessa(_voto)),
-            data: Value(_data),
-          ),
-        );
+    // Un secondo tocco mentre salva non deve registrare (né chiudere) due volte.
+    setState(() => _salvataggio = true);
+    try {
+      await ref
+          .read(repositoryProvider)
+          .registraEsito(
+            EsitiCompanion(
+              corsoId: Value(_corso!.id),
+              voto: Value(_aVoto ? _voto : null),
+              lode: Value(_aVoto && _lode && lodeAmmessa(_voto)),
+              data: Value(_data),
+            ),
+          );
+      if (mounted) Navigator.of(context).maybePop();
+    } finally {
+      if (mounted) setState(() => _salvataggio = false);
+    }
+  }
+
+  Future<void> _togli() async {
+    final corso = _corso!;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('Togliere il voto?'),
+        content: Text('Il voto di ${corso.nome} verrà cancellato dal libretto.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Annulla')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Togli')),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    await ref.read(repositoryProvider).eliminaEsito(corso.id);
     if (mounted) Navigator.of(context).maybePop();
   }
 
@@ -126,18 +152,11 @@ class _FormVotoState extends ConsumerState<FormVoto> {
           const SizedBox(height: 16),
           Row(
             children: [
-              if (esisteEsito)
-                TextButton(
-                  onPressed: () async {
-                    await ref.read(repositoryProvider).eliminaEsito(_corso!.id);
-                    if (context.mounted) Navigator.of(context).maybePop();
-                  },
-                  child: const Text('Togli il voto'),
-                ),
+              if (esisteEsito) TextButton(onPressed: _togli, child: const Text('Togli il voto')),
               const Spacer(),
               TextButton(onPressed: () => Navigator.of(context).maybePop(), child: const Text('Annulla')),
               const SizedBox(width: 8),
-              FilledButton(onPressed: _salva, child: const Text('Salva')),
+              FilledButton(onPressed: _salvataggio ? null : _salva, child: const Text('Salva')),
             ],
           ),
         ],
