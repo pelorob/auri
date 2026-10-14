@@ -13,9 +13,10 @@ Punto di ripartenza per la prossima sessione di lavoro.
 | 3c | Ripasso in cuffia (sintesi vocale), esame orale (riconoscimento vocale) | ✅ da provare sull'iPad |
 | 4a | Sezione Studio: Pomodoro, piano di studio, statistiche; piano anche in Home e Calendario | ✅ |
 | 4b | Riassunto (TextRank) e scheda di ripasso in PDF | ✅ |
-| 4c | Annotazioni con Apple Pencil; OCR con Apple Vision per le slide scansionate | ✅ codice scritto; **da compilare e provare** |
+| 4c | Annotazioni con Apple Pencil; OCR con Apple Vision per le slide scansionate | ✅ provata sul simulatore (Vision legge "Legge di Ohm") |
 
-- Test: **227 superati**, nessuno saltato.
+- Test: **339 superati**, nessuno saltato. Giro completo sul simulatore superato con la 0.5.0.
+- Verifica di tutti i pulsanti (14/10): un inventario ha trovato circa 120 elementi interattivi. Ora ognuno ha un test che lo tocca e ne controlla l'effetto (file `test/features/pulsanti_*_test.dart`), e sono stati corretti una ventina di difetti: conferme mancanti, doppi tocchi che duplicavano, tastiera che copriva lo schermo, due esami nello stesso giorno, scheda PDF senza gestione errori, plurali sbagliati. Le parti native (condivisione, scelta file, Touch ID, Impostazioni di iOS) sono sostituite da finti nei test.
 - Revisione indipendente delle fasi 2a–4c fatta il 14/10: 13 problemi trovati, **tutti corretti** con un test ciascuno. I principali:
   - SM-2 partiva da una copia vecchia della carta: una carta sbagliata e poi indovinata saltava a settimane;
   - "Ho studiato questa pagina" segnava la pagina sbagliata dopo uno scorrimento;
@@ -30,18 +31,17 @@ Punto di ripartenza per la prossima sessione di lavoro.
 ## File per l'iPad (cartella `dist/`, non versionata)
 
 - `dist/v0.3.0/auri.ipa`: fasi 1–3
-- `dist/v0.4.0/auri.ipa`: fasi 1–4a (pronta)
+- `dist/v0.4.0/auri.ipa`: fasi 1–4a
+- `dist/v0.5.0/auri.ipa`: **tutte le fasi 1–4c, versione da installare**
+- `dist/foto/galleria.html`: le 22 schermate del giro sul simulatore
 - `dist/spike/auri.ipa`: app di prova della trascrizione (fase 0)
 
-**Versione 0.5.0** (4b e 4c): numero di versione aggiornato, ma **non ancora compilata**. Il 14/10 GitHub Actions ha rifiutato di avviare la compilazione per un problema di pagamento o di limite di spesa dell'account (Settings → Billing & plans). Sarà la prima compilazione del codice Swift di Vision.
 
 ## Da fare, in ordine
 
-1. Compilare la 0.5.0 con GitHub Actions (`gh workflow run "Build iPad" -f runner=macos-15-intel`) e fare la prova sul simulatore (`gh workflow run simulatore.yml`). Il 14/10 il repository è stato ricreato **pubblico**, con la storia azzerata e senza riferimenti personali; da allora Actions è gratuito. Il backup della storia vecchia è in `dist/backup-storia.bundle`. In alternativa si può compilare su un Mac: `docs/compilare-sul-mac.md`, `scripts/compila-su-mac.sh`.
-2. Aggiornare `dist/foto/galleria.html` con le foto di Ripasso, Studio, Riassunto e Annotazioni (16–18, 15b, 15c).
-3. ~~Lacune rispetto alla specifica~~ chiuse il 14/10: nei quiz c'è "Domanda sbagliata, non mostrarla più" (esclude la frase d'origine, schema 7); la carta mostra "Ultimo ripasso" (ricavato da `revisioni`).
-4. Da verificare sull'iPad: il volume della sintesi vocale dopo il riconoscimento vocale (la sessione audio ora viene impostata prima di ogni frase) e la notifica di fine Pomodoro.
-5. **Fase 2b** (registrazione e trascrizione delle lezioni): aspetta i risultati della prova sull'iPad (`docs/fase0-risultati.md`).
+1. Compilazione: `gh workflow run "Build iPad" -f runner=macos-15-intel`; prova sul simulatore: `gh workflow run simulatore.yml`. Il repository è **pubblico** dal 14/10 (storia azzerata, nessun riferimento personale), quindi Actions è gratuito. Il backup della storia vecchia è in `dist/backup-storia.bundle`. In alternativa si compila su un Mac: `docs/compilare-sul-mac.md`.
+2. Da verificare sull'iPad: il volume della sintesi vocale dopo il riconoscimento vocale (la sessione audio ora viene impostata prima di ogni frase) e la notifica di fine Pomodoro.
+3. **Fase 2b** (registrazione e trascrizione delle lezioni): aspetta i risultati della prova sull'iPad (`docs/fase0-risultati.md`).
 
 ## Da fare con l'iPad
 
