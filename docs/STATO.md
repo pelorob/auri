@@ -48,7 +48,7 @@ Punto di ripartenza per la prossima sessione di lavoro.
 Guida: `docs/guida-utente.md`
 - installare SideStore e auri;
 - prova della trascrizione con l'app di prova;
-- verifica del rinnovo automatico per 2 settimane;
+- verifica del rinnovo automatico durante l'uso normale: la data di scadenza in Impostazioni deve spostarsi in avanti da sola ogni settimana (se manca poco compare l'avviso in Home);
 - collaudo: `docs/collaudo-fase1.md`.
 
 ## Note tecniche utili
