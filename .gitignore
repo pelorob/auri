@@ -1,0 +1,5 @@
+﻿.superpowers/
+dist/
+*.ipa
+.DS_Store
+Thumbs.db

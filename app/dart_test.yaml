@@ -1,0 +1,3 @@
+tags:
+  # Test che leggono PDF veri con PDFium: girano su Windows/macOS e nel simulatore, non sul Linux di GitHub.
+  pdfium:

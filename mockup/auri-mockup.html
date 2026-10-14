@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>auri – mockup iPad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F1FA;--ink:#19142E;--muted:#6B6785;--faint:#8A87A0;--violet:#5B3DE6;--violet2:#6B50F2;--violet3:#4730C4;--vsoft:#ECE8FF;--vchip:#E4DEFF;--lime:#D6F35B;--white:#FFFFFF}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#2A2440;font-family:'DM Sans',sans-serif;color:var(--ink)}
+.stage{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.tabs button{height:38px;padding:0 16px;border-radius:19px;border:0;background:#3B3457;color:#fff;font:700 14px 'DM Sans',sans-serif;cursor:pointer}
+.tabs button.on{background:var(--lime);color:var(--ink)}
+.device{width:1180px;height:820px;border-radius:36px;overflow:hidden;box-shadow:0 0 0 14px #111,0 30px 80px rgba(0,0,0,.5);transform-origin:center center;flex-shrink:0}
+.screen{display:none;width:1180px;height:820px}
+.screen.on{display:flex}
+.app{padding:20px;gap:20px;background:var(--bg)}
+.disp{font-family:'Bricolage Grotesque',sans-serif}
+nav{width:220px;flex-shrink:0;background:#fff;border-radius:28px;padding:24px 14px;display:flex;flex-direction:column;gap:6px}
+.logo{display:flex;align-items:center;gap:6px;padding:0 12px 22px}
+.logo b{font:800 30px 'Bricolage Grotesque',sans-serif;letter-spacing:-1px}
+.dot{width:12px;height:12px;border-radius:6px;background:var(--lime);margin-top:10px}
+.ni{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 14px;border-radius:14px;text-decoration:none;font-weight:600;font-size:15px;color:var(--ink);cursor:pointer;border:0;background:none;font-family:inherit;text-align:left;width:100%}
+.ni.on{background:var(--violet);color:#fff}
+.ni.off{color:var(--faint);cursor:default}
+.ni .soon{margin-left:auto;font-size:11px;font-weight:700;background:var(--bg);color:var(--muted);padding:3px 8px;border-radius:99px}
+.sep{height:1px;background:#ECEAF5;margin:12px 8px}
+.grow{flex-grow:1}
+.main{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:20px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+h1{margin:6px 0 0;font:800 38px/1.05 'Bricolage Grotesque',sans-serif;letter-spacing:-1px}
+.hdr{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:6px 4px 0}
+.btn-dark{height:48px;padding:0 20px;border-radius:24px;border:0;background:var(--ink);color:#fff;font:700 15px 'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer}
+.btn-round{width:48px;height:48px;border-radius:24px;border:0;background:#fff;color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.card{background:#fff;border-radius:28px;padding:24px}
+.lbl{font-size:12px;font-weight:800;letter-spacing:1.2px}
+h3{margin:0;font:700 20px 'Bricolage Grotesque',sans-serif}
+.row{display:flex;align-items:center;gap:14px}
+.tile{width:52px;height:56px;flex-shrink:0;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.tile b{font:800 20px/1 'Bricolage Grotesque',sans-serif}
+.tile span{font-size:11px;font-weight:800;letter-spacing:.8px}
+.t1{font-weight:700;font-size:15px}.t2{font-size:13px;color:var(--muted);margin-top:2px}
+.pill{font-size:13px;font-weight:800;padding:6px 10px;border-radius:99px;white-space:nowrap}
+.grade{min-width:52px;height:44px;padding:0 10px;border-radius:14px;font:800 20px 'Bricolage Grotesque',sans-serif;display:flex;align-items:center;justify-content:center}
+.link{font-size:14px;font-weight:700;color:var(--violet);cursor:pointer;background:none;border:0;font-family:inherit}
+.blob{position:absolute;border-radius:50%}
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="tabs" id="tabs">
+<button data-go="oggi" class="on">Oggi</button>
+<button data-go="libretto">Libretto</button>
+<button data-go="calendario">Calendario</button>
+<button data-go="blocco">Blocco Touch ID</button>
+</div>
+<div class="device" id="device">
+
+<!-- ===== OGGI ===== -->
+<section class="screen app on" id="oggi">
+<nav data-active="oggi"></nav>
+<div class="main">
+<div class="hdr">
+<div><div class="eyebrow">Martedì 13 ottobre</div><h1>Ciao! Pronta a spaccare?</h1></div>
+<div style="display:flex;gap:10px">
+<button class="btn-round" aria-label="Notifiche"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></button>
+<button class="btn-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Aggiungi</button>
+</div>
+</div>
+<div style="flex-grow:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:270px minmax(0,1fr);gap:20px">
+<div style="grid-column:span 2;position:relative;overflow:hidden;background:var(--violet);color:#fff;border-radius:28px;padding:28px 30px;display:flex;flex-direction:column">
+<div class="blob" style="width:300px;height:300px;background:var(--violet2);right:-40px;top:-70px"></div>
+<div class="blob" style="width:90px;height:90px;background:var(--lime);right:250px;bottom:-40px"></div>
+<div style="position:relative;display:flex;justify-content:space-between;gap:20px;flex-grow:1">
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="align-self:flex-start;background:var(--lime);color:var(--ink);font-size:12px;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:99px">PROSSIMO ESAME</span>
+<div class="disp" style="margin-top:6px;font-weight:800;font-size:34px;letter-spacing:-.8px;line-height:1.05">Analisi Matematica I</div>
+<div style="font-size:15px;font-weight:500;color:var(--vchip)">Scritto · mar 27 ottobre · 9:00 · Aula B2</div>
+</div>
+<div style="text-align:right">
+<div class="disp" style="font-weight:800;font-size:112px;line-height:.85;letter-spacing:-4px;color:var(--lime)">14</div>
+<div style="font-weight:700;font-size:16px;margin-top:6px">giorni</div>
+</div>
+</div>
+<div style="position:relative;display:flex;align-items:center;gap:18px">
+<div style="flex-grow:1">
+<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--vchip);margin-bottom:8px"><span>Piano di ripasso</span><span>64%</span></div>
+<div style="height:10px;border-radius:5px;background:var(--violet3)"><div style="width:64%;height:10px;border-radius:5px;background:var(--lime)"></div></div>
+</div>
+<button data-go="calendario" style="flex-shrink:0;height:46px;padding:0 20px;border-radius:23px;border:0;background:#fff;color:var(--ink);font:700 15px 'DM Sans',sans-serif;cursor:pointer">Vedi appello →</button>
+</div>
+</div>
+<button data-go="libretto" style="text-align:left;border:0;cursor:pointer;font-family:inherit;color:var(--ink);background:var(--lime);border-radius:28px;padding:26px;display:flex;flex-direction:column">
+<div class="lbl">MEDIA PONDERATA</div>
+<div class="disp" style="font-weight:800;font-size:76px;letter-spacing:-3px;line-height:1;margin-top:14px">27,75</div>
+<div style="font-size:14px;font-weight:600;margin-top:4px">su 48 CFU con voto</div>
+<div class="grow"></div>
+<div style="width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:#fff;border-radius:18px;padding:12px 16px">
+<span style="font-size:13px;font-weight:600">Base di laurea</span>
+<span class="disp" style="font-weight:800;font-size:22px">101,8<span style="font-size:14px;color:#B9B4D0">/110</span></span>
+</div>
+</button>
+<div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+<div class="lbl" style="align-self:flex-start;color:var(--muted)">AVANZAMENTO</div>
+<div style="position:relative;width:168px;height:168px">
+<svg width="168" height="168" viewBox="0 0 168 168"><circle cx="84" cy="84" r="70" fill="none" stroke="#ECE8FF" stroke-width="18"/><circle cx="84" cy="84" r="70" fill="none" stroke="#5B3DE6" stroke-width="18" stroke-linecap="round" stroke-dasharray="124.6 439.8" transform="rotate(-90 84 84)"/></svg>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span class="disp" style="font-weight:800;font-size:44px;letter-spacing:-1.5px;line-height:1">51</span><span style="font-size:13px;font-weight:600;color:var(--muted)">di 180 CFU</span></div>
+</div>
+<div style="font-size:14px;font-weight:600">Hai fatto il <span style="color:var(--violet)">28%</span> del percorso</div>
+</div>
+<div class="card" style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:center"><h3>Prossimi appelli</h3><button class="link" data-go="calendario">Tutti</button></div>
+<div id="home-appelli" style="display:flex;flex-direction:column;gap:14px"></div>
+</div>
+<div class="card" style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:center"><h3>Ultimi voti</h3><button class="link" data-go="libretto">Libretto</button></div>
+<div id="home-voti" style="display:flex;flex-direction:column;gap:14px"></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===== LIBRETTO ===== -->
+<section class="screen app" id="libretto">
+<nav data-active="libretto"></nav>
+<div style="flex-grow:1;min-width:0;display:flex;gap:20px">
+<div style="flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:16px">
+<div class="hdr">
+<div><div class="eyebrow">Ingegneria Informatica · 2° anno</div><h1>Libretto</h1></div>
+<button class="btn-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Registra voto</button>
+</div>
+<div class="card" style="flex-grow:1;min-height:0;padding:18px 22px;display:flex;flex-direction:column">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 70px 80px;gap:12px;padding:4px 6px 10px;font-size:12px;font-weight:800;letter-spacing:1px;color:var(--muted)"><span>ESAME</span><span style="text-align:center">CFU</span><span style="text-align:center">VOTO</span></div>
+<div class="lbl" style="color:var(--violet);padding:6px">SUPERATI · 7</div>
+<div id="lib-superati"></div>
+<div class="lbl" style="color:var(--muted);padding:14px 6px 6px">DA SOSTENERE · 3</div>
+<div id="lib-dafare"></div>
+</div>
+</div>
+<div style="width:360px;flex-shrink:0;display:flex;flex-direction:column;gap:16px">
+<div style="background:var(--violet);color:#fff;border-radius:28px;padding:22px 24px;position:relative;overflow:hidden">
+<div class="blob" style="width:160px;height:160px;background:var(--violet2);right:-50px;top:-60px"></div>
+<div class="lbl" style="position:relative;color:var(--vchip)">MEDIA PONDERATA</div>
+<div style="position:relative;display:flex;align-items:baseline;gap:12px;margin-top:6px"><span class="disp" style="font-weight:800;font-size:64px;letter-spacing:-2.5px;line-height:1;color:var(--lime)">27,75</span><span style="font-size:14px;font-weight:600;color:var(--vchip)">aritmetica 27,50</span></div>
+<div style="position:relative;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px">
+<div style="background:var(--violet3);border-radius:16px;padding:10px 14px"><div style="font-size:12px;font-weight:600;color:var(--vchip)">Base di laurea</div><div class="disp" style="font-weight:800;font-size:22px">101,8<span style="font-size:13px;color:#C9C0FF">/110</span></div></div>
+<div style="background:var(--violet3);border-radius:16px;padding:10px 14px"><div style="font-size:12px;font-weight:600;color:var(--vchip)">CFU ottenuti</div><div class="disp" style="font-weight:800;font-size:22px">51<span style="font-size:13px;color:#C9C0FF">/180</span></div></div>
+</div>
+</div>
+<div class="card" style="padding:20px 22px">
+<div style="display:flex;align-items:center;gap:8px"><span style="background:var(--lime);font-size:12px;font-weight:800;letter-spacing:1px;padding:5px 10px;border-radius:99px">E SE…</span><span style="font-size:14px;font-weight:700">Analisi Matematica I · 12 CFU</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+<button id="dec" aria-label="Abbassa il voto" style="width:52px;height:52px;border-radius:26px;border:0;background:var(--bg);color:var(--ink);font-size:26px;font-weight:700;cursor:pointer">−</button>
+<div style="text-align:center"><div class="disp" id="sim-voto" style="font-weight:800;font-size:48px;letter-spacing:-1.5px;line-height:1">27</div><div style="font-size:12px;font-weight:600;color:var(--muted)">voto ipotetico</div></div>
+<button id="inc" aria-label="Alza il voto" style="width:52px;height:52px;border-radius:26px;border:0;background:var(--violet);color:#fff;font-size:26px;font-weight:700;cursor:pointer">+</button>
+</div>
+<div style="display:flex;gap:10px;margin-top:14px">
+<div style="flex:1;background:var(--bg);border-radius:16px;padding:10px 12px"><div style="font-size:12px;font-weight:600;color:var(--muted)">Nuova media</div><div class="disp" style="font-weight:800;font-size:20px"><span id="sim-media"></span> <span id="sim-delta" style="font-size:13px"></span></div></div>
+<div style="flex:1;background:var(--bg);border-radius:16px;padding:10px 12px"><div style="font-size:12px;font-weight:600;color:var(--muted)">Nuova base</div><div class="disp" style="font-weight:800;font-size:20px"><span id="sim-base"></span><span style="font-size:13px;color:var(--muted)">/110</span></div></div>
+</div>
+</div>
+<div style="flex-grow:1;background:var(--lime);border-radius:28px;padding:20px 22px;display:flex;flex-direction:column">
+<div class="lbl">OBIETTIVO DI LAUREA</div>
+<div id="targets" style="display:flex;gap:8px;margin-top:12px"></div>
+<div class="grow"></div>
+<div style="font-size:14px;font-weight:600">Media da tenere negli esami che mancano</div>
+<div class="disp" id="req" style="font-weight:800;font-size:40px;letter-spacing:-1.2px;line-height:1.1"></div>
+<div id="req-note" style="font-size:13px;font-weight:600"></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===== CALENDARIO ===== -->
+<section class="screen app" id="calendario">
+<nav data-active="calendario"></nav>
+<div style="flex-grow:1;min-width:0;display:flex;gap:20px">
+<div style="flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:16px">
+<div class="hdr">
+<div><div class="eyebrow">Sessione autunnale</div><h1>Calendario esami</h1></div>
+<div style="display:flex;align-items:center;gap:8px">
+<button class="btn-round" style="width:44px;height:44px" aria-label="Mese precedente">‹</button>
+<span class="disp" style="font-weight:700;font-size:18px;min-width:128px;text-align:center">Ottobre 2026</span>
+<button class="btn-round" style="width:44px;height:44px" aria-label="Mese successivo">›</button>
+</div>
+</div>
+<div class="card" style="flex-grow:1;min-height:0;padding:20px 20px 18px;display:flex;flex-direction:column;gap:8px">
+<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;font-size:12px;font-weight:800;letter-spacing:1px;color:var(--muted);text-align:center;padding-bottom:4px"><span>LUN</span><span>MAR</span><span>MER</span><span>GIO</span><span>VEN</span><span>SAB</span><span>DOM</span></div>
+<div id="cal" style="flex-grow:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(5,minmax(0,1fr));gap:6px"></div>
+<div style="display:flex;gap:18px;align-items:center;padding:8px 4px 0;font-size:13px;font-weight:600">
+<span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:5px;background:var(--violet)"></span>Esame</span>
+<span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:5px;background:#EEF9C8"></span>Giorni di ripasso</span>
+<span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:5px;border:2px solid var(--ink)"></span>Oggi</span>
+</div>
+</div>
+</div>
+<div style="width:340px;flex-shrink:0;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:22px 4px 4px">
+<div class="disp" style="font-weight:800;font-size:24px">Appelli</div>
+<button class="btn-dark" style="height:44px;font-size:14px;padding:0 16px">+ Nuovo</button>
+</div>
+<div id="cal-appelli" style="display:flex;flex-direction:column;gap:12px"></div>
+</div>
+</div>
+</section>
+
+<!-- ===== BLOCCO ===== -->
+<section class="screen" id="blocco" style="position:relative;overflow:hidden;background:var(--violet);color:#fff;align-items:center;justify-content:center">
+<div class="blob" style="width:520px;height:520px;background:var(--violet2);left:-160px;top:-200px"></div>
+<div class="blob" style="width:380px;height:380px;background:var(--violet3);right:-120px;bottom:-160px"></div>
+<div class="blob" style="width:120px;height:120px;background:var(--lime);right:220px;top:120px"></div>
+<div class="blob" style="width:44px;height:44px;background:var(--lime);left:250px;bottom:150px"></div>
+<div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center">
+<div style="display:flex;align-items:center;gap:8px"><span class="disp" style="font-weight:800;font-size:64px;letter-spacing:-2.5px">auri</span><span style="width:22px;height:22px;border-radius:11px;background:var(--lime);margin-top:22px"></span></div>
+<div style="font-size:18px;font-weight:500;color:var(--vchip);margin-top:-10px">I tuoi esami, al sicuro.</div>
+<div style="width:132px;height:132px;border-radius:40px;background:#fff;color:var(--violet);display:flex;align-items:center;justify-content:center;margin-top:18px">
+<svg width="72" height="72" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 20a10 10 0 0 1 20 0v4"/><path d="M19 22a5 5 0 0 1 10 0v6c0 4-1 7-3 10"/><path d="M24 22v8c0 4-1 7-3 10"/><path d="M14 26v2c0 5-1 9-3 12"/><path d="M34 30c0 4-.5 7-2 10"/><path d="M10 16a14 14 0 0 1 28 0"/></svg>
+</div>
+<button data-go="oggi" style="margin-top:10px;height:56px;padding:0 32px;border-radius:28px;border:0;background:var(--lime);color:var(--ink);font:800 17px 'DM Sans',sans-serif;cursor:pointer">Sblocca con Touch ID</button>
+<button data-go="oggi" style="background:none;border:0;color:#fff;font:600 15px 'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:4px;cursor:pointer">Usa il codice dell'iPad</button>
+</div>
+</section>
+
+</div>
+</div>
+
+<script>
+const IC = {
+  oggi:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  corsi:'<path d="M4 19.5V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M8 7h8"/>',
+  calendario:'<rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
+  libretto:'<path d="M12 3 2 8l10 5 10-5z"/><path d="M6 10.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.5"/>',
+  lezioni:'<rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/>',
+  ripasso:'<rect x="3" y="7" width="14" height="13" rx="2.5"/><path d="M7 3.5h11.5A2.5 2.5 0 0 1 21 6v11"/>',
+  blocco:'<rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>'
+};
+const svg = k => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+document.querySelectorAll('nav').forEach(n => {
+  const a = n.dataset.active;
+  const item = (k, label) => `<button class="ni${a===k?' on':''}" data-go="${k}">${svg(k)}${label}</button>`;
+  n.innerHTML = `<div class="logo"><b>auri</b><span class="dot"></span></div>
+  ${item('oggi','Oggi')}
+  <div class="ni" style="cursor:default">${svg('corsi')}Corsi</div>
+  ${item('calendario','Calendario')}${item('libretto','Libretto')}
+  <div class="sep"></div>
+  <div class="ni off">${svg('lezioni')}Lezioni<span class="soon">presto</span></div>
+  <div class="ni off">${svg('ripasso')}Ripasso<span class="soon">presto</span></div>
+  <div class="grow"></div>
+  <button class="ni" data-go="blocco" style="background:var(--bg)">${svg('blocco')}Blocca app</button>`;
+});
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id===id));
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.go===id));
+}
+document.addEventListener('click', e => { const t = e.target.closest('[data-go]'); if (t) go(t.dataset.go); });
+
+const appelli = [
+  {id:'a',g:'27',m:'OTT',n:'Analisi Matematica I',t:'Scritto · 9:00 · Aula B2',d:'14 g',bg:'#E4DEFF',on:true},
+  {id:'b',g:'30',m:'OTT',n:'Analisi Matematica I',t:'Orale · 14:30 · Studio 12',d:'17 g',bg:'#E4DEFF',on:true},
+  {id:'c',g:'4',m:'NOV',n:'Basi di Dati',t:'Scritto · 10:00 · Lab 3',d:'22 g',bg:'#FFD9C2',on:false},
+  {id:'d',g:'12',m:'NOV',n:'Reti di Calcolatori',t:'Scritto · 11:00 · Aula A1',d:'30 g',bg:'#C9F2EC',on:false}
+];
+const tile = a => `<div class="tile" style="background:${a.bg}"><b>${a.g}</b><span>${a.m}</span></div>`;
+document.getElementById('home-appelli').innerHTML = appelli.slice(0,3).map(a =>
+  `<div class="row">${tile(a)}<div style="flex-grow:1;min-width:0"><div class="t1">${a.n}</div><div class="t2">${a.t}</div></div><span class="pill" style="background:var(--bg)">${a.d}</span></div>`).join('');
+document.getElementById('home-voti').innerHTML = [
+  ['Programmazione','9 CFU · 8 luglio','29',true],['Economia Aziendale','6 CFU · 24 giugno','28'],['Statistica','6 CFU · 12 giugno','26']
+].map(v => `<div class="row"><div style="flex-grow:1"><div class="t1">${v[0]}</div><div class="t2">${v[1]}</div></div><span class="grade" style="background:${v[3]?'var(--violet)':'var(--vsoft)'};color:${v[3]?'#fff':'var(--ink)'}">${v[2]}</span></div>`).join('');
+
+const sup = [
+  ['#5B3DE6','Fondamenti di Informatica','15 febbraio 2026',12,'30L',true],
+  ['#5B3DE6','Programmazione','8 luglio 2026',9,'29'],
+  ['#FF7A2F','Economia Aziendale','24 giugno 2026',6,'28'],
+  ['#14B8A6','Algebra Lineare','30 gennaio 2026',6,'27'],
+  ['#14B8A6','Statistica','12 giugno 2026',6,'26'],
+  ['#FF7A2F','Fisica I','20 febbraio 2026',9,'25'],
+  ['#8A87A0','Inglese B2','10 dicembre 2025',3,'Idoneo',false,true]
+];
+const libRow = (dot, n, d, cfu, voto, hollow) => `<div style="display:grid;grid-template-columns:minmax(0,1fr) 70px 80px;gap:12px;align-items:center;padding:7px 6px;border-bottom:1px solid #F0EEF7">
+<div style="display:flex;align-items:center;gap:12px;min-width:0"><span style="width:10px;height:10px;border-radius:5px;flex-shrink:0;${hollow?`border:2px solid ${dot}`:`background:${dot}`}"></span><div><div class="t1">${n}</div><div style="font-size:12px;color:var(--muted)">${d}</div></div></div>
+<span style="text-align:center;font-weight:600">${cfu}</span>${voto}</div>`;
+document.getElementById('lib-superati').innerHTML = sup.map(s => libRow(s[0], s[1], s[2], s[3],
+  `<span style="justify-self:center;min-width:50px;height:36px;padding:0 10px;border-radius:12px;background:${s[5]?'var(--violet)':s[6]?'var(--bg)':'var(--vsoft)'};color:${s[5]?'#fff':'var(--ink)'};font:800 ${s[6]?13:18}px 'Bricolage Grotesque',sans-serif;display:flex;align-items:center;justify-content:center">${s[4]}</span>`)).join('');
+document.getElementById('lib-dafare').innerHTML = [
+  ['#5B3DE6','Analisi Matematica I','Appello 27 ottobre',12],['#FF7A2F','Basi di Dati','Appello 4 novembre',9],['#14B8A6','Reti di Calcolatori','Appello 12 novembre',6]
+].map(s => libRow(s[0], s[1], s[2], s[3], '<span style="justify-self:center;color:var(--muted)">—</span>', true)).join('');
+
+const fmt = (n, d) => n.toFixed(d).replace('.', ',');
+const SOMMA = 1332, CFUV = 48, MANCANO = 129;
+let voto = 27, target = 105;
+function sim(){
+  const nm = (SOMMA + 12*voto) / (CFUV + 12), diff = nm - SOMMA/CFUV;
+  document.getElementById('sim-voto').textContent = voto;
+  document.getElementById('sim-media').textContent = fmt(nm, 2);
+  const dl = document.getElementById('sim-delta');
+  dl.textContent = (diff >= 0 ? '+' : '') + fmt(diff, 2); dl.style.color = diff >= 0 ? '#15803D' : '#C2410C';
+  document.getElementById('sim-base').textContent = fmt(nm*110/30, 1);
+  const req = (target*30/110*(CFUV+MANCANO) - SOMMA) / MANCANO;
+  document.getElementById('req').textContent = req > 30 ? 'oltre 30' : fmt(req, 2);
+  document.getElementById('req-note').textContent = req > 30 ? 'Fuori portata senza tante lodi: punta a 105!' : `sui ${MANCANO} CFU che ti mancano`;
+  document.getElementById('targets').innerHTML = [100,105,110].map(x =>
+    `<button data-t="${x}" style="flex:1;height:44px;border-radius:22px;border:0;background:${x===target?'var(--ink)':'#fff'};color:${x===target?'#fff':'var(--ink)'};font:800 17px 'Bricolage Grotesque',sans-serif;cursor:pointer">${x}</button>`).join('');
+}
+document.getElementById('dec').onclick = () => { voto = Math.max(18, voto-1); sim(); };
+document.getElementById('inc').onclick = () => { voto = Math.min(30, voto+1); sim(); };
+document.getElementById('targets').onclick = e => { const b = e.target.closest('[data-t]'); if (b) { target = +b.dataset.t; sim(); } };
+sim();
+
+const esami = {27:'Analisi I · scritto', 30:'Analisi I · orale'};
+let cal = '<div></div><div></div><div></div>';
+for (let d = 1; d <= 31; d++) {
+  const bg = esami[d] ? '#ECE8FF' : (d > 13 && d < 27 ? '#EEF9C8' : '#F7F6FC');
+  cal += `<div style="border-radius:16px;background:${bg};color:${d<13?'var(--faint)':'var(--ink)'};padding:8px 9px;display:flex;flex-direction:column;gap:4px;${d===13?'border:2px solid var(--ink)':''}">
+  <span class="disp" style="font-weight:700;font-size:16px">${d}</span>${esami[d]?`<span style="font-size:11px;font-weight:800;background:var(--violet);color:#fff;border-radius:8px;padding:3px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esami[d]}</span>`:''}</div>`;
+}
+document.getElementById('cal').innerHTML = cal + '<div></div>';
+
+function renderAppelli(){
+  document.getElementById('cal-appelli').innerHTML = appelli.map(a => `<div style="background:#fff;border-radius:22px;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+  <div class="row" style="gap:12px">${tile(a)}<div style="flex-grow:1;min-width:0"><div class="t1">${a.n}</div><div style="font-size:12px;color:var(--muted)">${a.t}</div></div><span class="pill" style="background:var(--lime)">${a.d}</span></div>
+  <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700">
+  <span style="background:var(--bg);padding:4px 8px;border-radius:99px">7 g</span><span style="background:var(--bg);padding:4px 8px;border-radius:99px">1 g</span><span style="background:var(--bg);padding:4px 8px;border-radius:99px">mattina</span>
+  <span class="grow"></span>
+  <button data-isc="${a.id}" aria-pressed="${a.on}" style="height:32px;padding:0 12px;border-radius:16px;border:0;background:${a.on?'var(--violet)':'var(--bg)'};color:${a.on?'#fff':'var(--ink)'};font:700 12px 'DM Sans',sans-serif;cursor:pointer">${a.on?'Iscritta':'Non iscritta'}</button></div></div>`).join('');
+}
+document.getElementById('cal-appelli').onclick = e => { const b = e.target.closest('[data-isc]'); if (b) { const a = appelli.find(x => x.id === b.dataset.isc); a.on = !a.on; renderAppelli(); } };
+renderAppelli();
+
+function fit(){
+  const s = Math.min((innerWidth - 60) / 1208, (innerHeight - 110) / 848, 1);
+  const d = document.getElementById('device');
+  d.style.transform = `scale(${s})`;
+  d.style.margin = `${(820*s - 820)/2}px ${(1180*s - 1180)/2}px`;
+}
+addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+name: Prova su simulatore iPad
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: 'Mac da usare'
+        default: macos-15-intel
+
+jobs:
+  simulatore:
+    runs-on: ${{ inputs.runner || 'macos-15-intel' }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Avvia il simulatore (iPad A16 se disponibile)
+        timeout-minutes: 12
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)['devices']
+          ipad = [x for r in d.values() for x in r if x['name'].startswith('iPad')]
+          scelti = [x for x in ipad if 'A16' in x['name']] or [x for x in ipad if x['name'].startswith('iPad (')] or ipad
+          print(scelti[0]['udid'])
+          print(scelti[0]['name'], file=sys.stderr)
+          ")
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+      - name: Compila per il simulatore
+        timeout-minutes: 25
+        run: flutter build ios --simulator --debug
+      - name: Giro completo dell'app
+        timeout-minutes: 20
+        run: flutter test integration_test/app_test.dart -d "$UDID" --reporter expanded --dart-define=FOTO_DIR="$RUNNER_TEMP/foto"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: foto-simulatore
+          path: ${{ runner.temp }}/foto/
+          retention-days: 30

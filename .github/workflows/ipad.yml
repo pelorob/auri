@@ -1,0 +1,52 @@
+name: Build iPad
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: 'Mac da usare (se macos-latest è in coda da troppo, prova macos-15-intel)'
+        default: macos-latest
+  push:
+    tags: ['v*']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter test --exclude-tags pdfium
+
+  ipa:
+    needs: test
+    runs-on: ${{ inputs.runner || 'macos-latest' }}
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build ios --release --no-codesign
+      - name: Crea auri.ipa
+        run: |
+          rm -rf Payload auri.ipa
+          mkdir Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -qr auri.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auri-ipa
+          path: app/auri.ipa
+          retention-days: 30
