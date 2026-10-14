@@ -39,6 +39,15 @@ final trattiProvider = StreamProvider.family<List<Tratto>, int>((ref, documentoI
 
 const coloriPenna = [0xFF5B3DE6, 0xFF19142E, 0xFFE0457B, 0xFF14B8A6];
 const coloriEvidenziatore = [0xFFD6F35B, 0xFFFFD166, 0xFF7DD3FC];
+const nomiColori = {
+  0xFF5B3DE6: 'viola',
+  0xFF19142E: 'nero',
+  0xFFE0457B: 'rosa',
+  0xFF14B8A6: 'verde acqua',
+  0xFFD6F35B: 'lime',
+  0xFFFFD166: 'giallo',
+  0xFF7DD3FC: 'azzurro',
+};
 
 /// Livello di disegno sopra una pagina del PDF.
 class StratoAnnotazioni extends ConsumerStatefulWidget {
@@ -181,16 +190,32 @@ class BarraStrumenti extends ConsumerWidget {
         pulsante(Strumento.gomma, Icons.auto_fix_normal_outlined, 'Gomma'),
         if (s.strumento == Strumento.penna || s.strumento == Strumento.evidenziatore)
           for (final col in colori)
-            GestureDetector(
-              onTap: () => c.colore(col),
-              child: Container(
-                width: 26,
-                height: 26,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  color: Color(col),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: s.colore == col ? AuriColori.inchiostro : Colors.transparent, width: 2),
+            // Pallino da 26 dentro un'area da 44: abbastanza grande per il dito, con nome per VoiceOver.
+            Tooltip(
+              message: 'Colore ${nomiColori[col] ?? ''}'.trim(),
+              excludeFromSemantics: true,
+              child: Semantics(
+                label: 'Colore ${nomiColori[col] ?? ''}'.trim(),
+                button: true,
+                selected: s.colore == col,
+                child: InkResponse(
+                  onTap: () => c.colore(col),
+                  radius: 22,
+                  child: SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Center(
+                      child: Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: Color(col),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: s.colore == col ? AuriColori.inchiostro : Colors.transparent, width: 2),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
