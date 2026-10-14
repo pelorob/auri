@@ -37,8 +37,7 @@ Punto di ripartenza per la prossima sessione di lavoro.
 
 ## Da fare, in ordine
 
-0. **Compilare senza GitHub Actions** (bloccato dalla fatturazione): si può compilare su un Mac qualsiasi. Guida `docs/compilare-sul-mac.md` e script `scripts/compila-su-mac.sh`, che controlla Xcode, Homebrew, CocoaPods e Flutter, fa `git pull`, compila e mette `auri-<versione>.ipa` sulla Scrivania; con `--simulatore` fa anche il giro di prova. GitHub Actions resta come alternativa, se si sistema la fatturazione.
-1. Compilare la 0.5.0 su un Mac (`./scripts/compila-su-mac.sh --simulatore`), oppure con GitHub Actions se torna disponibile. Il giro sul simulatore comprende già Studio, il riassunto, la penna (con verifica del tratto salvato) e l'OCR della pagina 1 di `ohm.pdf`, che deve leggere "Legge di Ohm".
+1. Compilare la 0.5.0 con GitHub Actions (`gh workflow run "Build iPad" -f runner=macos-15-intel`) e fare la prova sul simulatore (`gh workflow run simulatore.yml`). Il 14/10 il repository è stato ricreato **pubblico**, con la storia azzerata e senza riferimenti personali; da allora Actions è gratuito. Il backup della storia vecchia è in `dist/backup-storia.bundle`. In alternativa si può compilare su un Mac: `docs/compilare-sul-mac.md`, `scripts/compila-su-mac.sh`.
 2. Aggiornare `dist/foto/galleria.html` con le foto di Ripasso, Studio, Riassunto e Annotazioni (16–18, 15b, 15c).
 3. ~~Lacune rispetto alla specifica~~ chiuse il 14/10: nei quiz c'è "Domanda sbagliata, non mostrarla più" (esclude la frase d'origine, schema 7); la carta mostra "Ultimo ripasso" (ricavato da `revisioni`).
 4. Da verificare sull'iPad: il volume della sintesi vocale dopo il riconoscimento vocale (la sessione audio ora viene impostata prima di ogni frase) e la notifica di fine Pomodoro.
@@ -57,5 +56,5 @@ Guida: `docs/guida-utente.md`
 - Flutter in `C:\Users\pellegatti\Tools\flutter\bin` (3.47.7). La piattaforma Windows è stata rimossa: lo sviluppo si fa con i test.
 - I test che usano PDFium hanno il tag `pdfium` e sono esclusi sul Linux di GitHub.
 - I Mac arm64 di GitHub sono spesso saturi: usare `runner=macos-15-intel`.
-- Repository privato: github.com/pelorob/auri.
+- Repository **pubblico**: github.com/pelorob/auri. Non scrivere nel repository dati o riferimenti personali.
 - Documenti di progetto in `docs/superpowers/specs/`, piani in `docs/superpowers/plans/`.
