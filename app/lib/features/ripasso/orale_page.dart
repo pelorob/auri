@@ -54,6 +54,7 @@ class _OralePageState extends ConsumerState<OralePage> {
       return;
     }
     await _voce.ferma();
+    if (!mounted) return; // uscita nel frattempo: il microfono non si accende
     setState(() {
       _fase = _Fase.ascolto;
       _detto = '';
@@ -72,16 +73,14 @@ class _OralePageState extends ConsumerState<OralePage> {
     } finally {
       _chiudendo = false;
     }
-    if (_fase != _Fase.ascolto) return;
+    if (!mounted || _fase != _Fase.ascolto) return;
     final v = valutaRisposta(attesa: _domande![_indice].attesa, detta: detto);
     _coperture.add(v.copertura);
-    if (mounted) {
-      setState(() {
-        _detto = detto;
-        _valutazione = v;
-        _fase = _Fase.valutata;
-      });
-    }
+    setState(() {
+      _detto = detto;
+      _valutazione = v;
+      _fase = _Fase.valutata;
+    });
   }
 
   Future<void> _prossima() async {

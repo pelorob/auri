@@ -138,7 +138,7 @@ class _CuffiaPageState extends ConsumerState<CuffiaPage> {
                         OutlinedButton.icon(
                           onPressed: () async {
                             await _pausa();
-                            setState(() => _indice++);
+                            if (mounted) setState(() => _indice++);
                           },
                           icon: const Icon(Icons.skip_next_rounded),
                           label: const Text('Avanti'),

@@ -62,10 +62,20 @@ class _SessioneRipassoPageState extends ConsumerState<SessioneRipassoPage> {
   }
 
   Future<void> _escludi() async {
-    await ref.read(repositoryProvider).escludiCarta(_coda![_indice].id);
+    // Mentre si salva una risposta la coda sta per cambiare: escluderla ora la farebbe tornare.
+    if (_occupato || _indice >= _coda!.length) return;
+    _occupato = true;
+    final id = _coda![_indice].id;
+    try {
+      await ref.read(repositoryProvider).escludiCarta(id);
+    } finally {
+      _occupato = false;
+    }
     if (!mounted) return;
     setState(() {
-      _coda!.removeAt(_indice);
+      // Via tutte le copie (anche quella rimessa in fondo da "Non la sapevo").
+      _indice -= _coda!.take(_indice).where((c) => c.id == id).length;
+      _coda!.removeWhere((c) => c.id == id);
       _girata = false;
     });
   }
