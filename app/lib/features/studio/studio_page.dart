@@ -130,8 +130,8 @@ class _Piani extends ConsumerWidget {
               backgroundColor: AuriColori.violaTenue,
             ),
             const SizedBox(height: 4),
-            Text('Oggi: ${x.piano.paginePerOggi} pagine', style: testo(14, peso: FontWeight.w700)),
-            Text('${x.piano.fatte} di ${x.piano.totalePagine} pagine studiate', style: testo(12, colore: AuriColori.grigio)),
+            Text('Oggi: ${quanti(x.piano.paginePerOggi, 'pagina', 'pagine')}', style: testo(14, peso: FontWeight.w700)),
+            Text('${x.piano.fatte} di ${quanti(x.piano.totalePagine, 'pagina studiata', 'pagine studiate')}', style: testo(12, colore: AuriColori.grigio)),
           ],
         ],
       ),
@@ -222,7 +222,7 @@ class _Statistiche extends ConsumerWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 3),
                           child: Tooltip(
-                            message: '$n carte',
+                            message: quanti(n, 'carta', 'carte'),
                             child: Container(
                               height: 6 + 80 * n / massimoGiorno,
                               decoration: BoxDecoration(color: n == 0 ? AuriColori.violaTenue : AuriColori.viola, borderRadius: BorderRadius.circular(4)),

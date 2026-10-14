@@ -223,7 +223,7 @@ class _ProssimoEsame extends StatelessWidget {
                             if (piano != null && piano!.totalePagine > 0) ...[
                               const Spacer(),
                               Text(
-                                'Piano di ripasso ${(piano!.percentuale * 100).round()}% · oggi ${piano!.paginePerOggi} pagine',
+                                'Piano di ripasso ${(piano!.percentuale * 100).round()}% · oggi ${quanti(piano!.paginePerOggi, 'pagina', 'pagine')}',
                                 style: testo(13, peso: FontWeight.w600, colore: AuriColori.violaChip),
                               ),
                               const SizedBox(height: 6),

@@ -8,6 +8,12 @@ void main() {
     expect(formatta(27.5, 2), '27,50');
     expect(formatta(null, 2), '—');
   });
+  test('singolare e plurale', () {
+    expect(quanti(1, 'pagina', 'pagine'), '1 pagina');
+    expect(quanti(0, 'pagina', 'pagine'), '0 pagine');
+    expect(quanti(3, 'carta', 'carte'), '3 carte');
+  });
+
   test('giorni fa', () {
     final ora = DateTime(2026, 10, 14, 9);
     expect(giorniFa(DateTime(2026, 10, 14, 8), ora), 'oggi');

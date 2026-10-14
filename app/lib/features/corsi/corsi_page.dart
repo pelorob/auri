@@ -29,7 +29,7 @@ class CorsiPage extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TitoloPagina(
-          sopra: '${corsi.length} corsi',
+          sopra: quanti(corsi.length, 'corso', 'corsi'),
           testoTitolo: 'Corsi',
           azione: FilledButton.icon(onPressed: () => mostraFormCorso(context), icon: const Icon(Icons.add_rounded), label: const Text('Nuovo corso')),
         ),

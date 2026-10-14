@@ -17,6 +17,7 @@ import '../../domain/slide.dart';
 import '../../services/ocr.dart';
 import '../../services/scheda_pdf.dart';
 import 'annotazioni.dart';
+import '../../domain/formati.dart';
 
 /// Condivide la scheda PDF creata (sostituibile nei test, dove il foglio di condivisione non c'è).
 final condivisioneSchedaProvider = Provider<Future<void> Function(File file, Rect origine)>(
@@ -91,7 +92,7 @@ class _DocumentoPageState extends ConsumerState<DocumentoPage> {
     );
     try {
       final n = await ref.read(letturaScansioniProvider).leggiDocumento(widget.documentoId, percorso, avanzamento: (f, t) => avanzamento.value = f / t);
-      avvisi.showSnackBar(SnackBar(content: Text(n == 0 ? 'Non ho trovato testo in queste immagini.' : 'Testo letto in $n pagine: ora puoi cercarlo.')));
+      avvisi.showSnackBar(SnackBar(content: Text(n == 0 ? 'Non ho trovato testo in queste immagini.' : 'Testo letto in ${quanti(n, 'pagina', 'pagine')}: ora puoi cercarlo.')));
     } on OcrNonDisponibile catch (e) {
       avvisi.showSnackBar(SnackBar(content: Text(e.toString())));
     } catch (_) {
@@ -168,7 +169,7 @@ class _DocumentoPageState extends ConsumerState<DocumentoPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(d.documento.titolo, style: titolo(22), maxLines: 2, overflow: TextOverflow.ellipsis),
-                          Text('${d.documento.numeroPagine} pagine', style: testo(13, colore: AuriColori.grigio)),
+                          Text(quanti(d.documento.numeroPagine, 'pagina', 'pagine'), style: testo(13, colore: AuriColori.grigio)),
                           const SizedBox(height: 8),
                           Align(
                             alignment: Alignment.centerLeft,
@@ -177,7 +178,7 @@ class _DocumentoPageState extends ConsumerState<DocumentoPage> {
                                 final avvisi = ScaffoldMessenger.of(context);
                                 final n = await ref.read(repositoryProvider).generaCarte(widget.documentoId);
                                 avvisi.showSnackBar(
-                                  SnackBar(content: Text(n == 0 ? 'Nessuna nuova flashcard: le hai già tutte' : '$n flashcard create: le trovi in Ripasso')),
+                                  SnackBar(content: Text(n == 0 ? 'Nessuna nuova flashcard: le hai già tutte' : '${quanti(n, 'flashcard creata', 'flashcard create')}: le trovi in Ripasso')),
                                 );
                               },
                               icon: const Icon(Icons.style_outlined),

@@ -11,6 +11,7 @@ import 'cuffia_page.dart';
 import 'orale_page.dart';
 import 'sessione_ripasso_page.dart';
 import 'simulazione_page.dart';
+import '../../domain/formati.dart';
 
 class RipassoPage extends ConsumerWidget {
   const RipassoPage({super.key});
@@ -117,7 +118,7 @@ class RipassoPage extends ConsumerWidget {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              x.totali == 0 ? 'Nessuna flashcard' : '${x.oggi} da ripassare · ${x.totali} carte',
+                              x.totali == 0 ? 'Nessuna flashcard' : '${x.oggi} da ripassare · ${quanti(x.totali, 'carta', 'carte')}',
                               style: testo(14, colore: AuriColori.grigio),
                             ),
                             const Spacer(),

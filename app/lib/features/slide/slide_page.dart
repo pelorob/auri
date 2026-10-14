@@ -12,6 +12,7 @@ import '../../data/repository.dart';
 import '../../domain/slide.dart';
 import '../../services/importazione_slide.dart';
 import 'documento_page.dart';
+import '../../domain/formati.dart';
 
 /// Sceglie un PDF dai file (sostituibile nei test, dove il selettore nativo non c'è).
 final sceltaPdfProvider = Provider<Future<String?> Function()>(
@@ -194,7 +195,7 @@ class _SlidePageState extends ConsumerState<SlidePage> {
                                   contentPadding: EdgeInsets.zero,
                                   leading: const Icon(Icons.picture_as_pdf_outlined, color: AuriColori.viola),
                                   title: Text(d.documento.titolo, style: testo(15, peso: FontWeight.w700)),
-                                  subtitle: Text('${d.documento.numeroPagine} pagine', style: testo(13, colore: AuriColori.grigio)),
+                                  subtitle: Text(quanti(d.documento.numeroPagine, 'pagina', 'pagine'), style: testo(13, colore: AuriColori.grigio)),
                                   trailing: IconButton(tooltip: 'Elimina', onPressed: () => _elimina(d), icon: const Icon(Icons.delete_outline_rounded)),
                                   onTap: () => _apri(d.documento.id),
                                 ),
